@@ -2,12 +2,14 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 
-const DAILY_GOAL: number = 8; // Total diário de copos
+// const DAILY_GOAL: number = 8; // Total diário de copos
 
 export default function App() {
 
   const [cups, setCups] = useState<number>(0);
-  const percentage: number = (cups / DAILY_GOAL) * 100;
+  const [dailyGoal, setDailyGoal] = useState<number>(8);
+
+  const percentage: number = (cups / dailyGoal) * 100;
 
   const removeCup = () => {
     if (cups > 0) {
@@ -16,7 +18,7 @@ export default function App() {
   };
 
   const addCup = () => {
-    setCups(Math.min(DAILY_GOAL, cups + 1));
+    setCups(Math.min(dailyGoal, cups + 1));
   };
 
   return (
@@ -29,6 +31,25 @@ export default function App() {
 
       {/* Seção Principal / Indicador Visual */}
       <View style={styles.content}>
+
+        {/* Seção de ajuste da meta diária */}
+        <View style={styles.goalContainer}>
+            <TouchableOpacity
+              onPress={() => setDailyGoal(prev => Math.max(1, prev - 1))}
+              style={styles.goalButton}
+            >
+              <Text style={styles.goalButtonText}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.goalText}>
+              Meta diária: {dailyGoal} copos
+            </Text>
+            <TouchableOpacity
+              onPress={() => setDailyGoal(prev => prev + 1)}
+              style={styles.goalButton}
+            >
+              <Text style={styles.goalButtonText}>+</Text>
+            </TouchableOpacity>
+        </View>
 
         {/* Wrapper para permitir sombra em iOS e Android */}
         <View style={styles.outerCircleWrapper}>
@@ -50,11 +71,11 @@ export default function App() {
          <View style={styles.feedbackContainer}>
           <Text style={[
             styles.statusText,
-            cups >= DAILY_GOAL && { color: '#059669' }
+            cups >= dailyGoal && { color: '#059669' }
           ]}>{
-            cups >= DAILY_GOAL 
+            cups >= dailyGoal 
             ? "Parabéns! Meta batida! 🎉" 
-            : `Faltam ${DAILY_GOAL - cups} copos para a meta.`
+            : `Faltam ${dailyGoal - cups} copos para a meta.`
           }</Text>
 
           {/* Barra de progresso */}
@@ -217,4 +238,34 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
+  goalContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    gap: 12,
+    alignItems: 'center', //Alinha no eixo transversal (perpendicula à flexDirection)
+    justifyContent: 'center', //Alinha no eixo principal (direção da flexDirection)
+  },
+  goalButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#38BDF8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowColor: '#0284C7',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  goalButtonText: {
+    color: '#FFF',
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
+  goalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#94A3B8',
+  }
 });
