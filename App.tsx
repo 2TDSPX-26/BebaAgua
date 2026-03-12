@@ -10,7 +10,13 @@ export default function App() {
   const percentage: number = (cups / DAILY_GOAL) * 100;
 
   const removeCup = () => {
-    setCups(Math.max(0, cups - 1));
+    if (cups > 0) {
+      setCups(prev => prev - 1);
+    }
+  };
+
+  const addCup = () => {
+    setCups(Math.min(DAILY_GOAL, cups + 1));
   };
 
   return (
@@ -64,7 +70,7 @@ export default function App() {
       <View style={styles.footer}>
 
         {/* Botão Principal */}
-        <TouchableOpacity style={styles.mainButton} onPress={() => setCups(cups + 1)}>
+        <TouchableOpacity style={styles.mainButton} onPress={addCup}>
           <Text style={styles.mainButtonText}>BEBER 1 COPO (200ML)</Text>
         </TouchableOpacity>
 
